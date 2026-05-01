@@ -33,7 +33,7 @@ A web-based AI-Powered tool designed to extract, analyze, and visualize student 
 1.  **Acquire the source code:**
     Extract the project zip file or clone the repository provided by the developer.
     ```bash
-    cd ktu-result-analyser
+    cd KTU
     ```
 
 2.  **Create a virtual environment (Recommended):**
@@ -64,18 +64,8 @@ A web-based AI-Powered tool designed to extract, analyze, and visualize student 
     python app.py
     ```
     The app will start at `http://localhost:5000`.
-
-## ⚠️ Handover & Admin Access
-
-When sharing this project with another user or for evaluation:
-
-1.  **Environment Setup**: The receiver **must** create their own `.env` file in the root directory (using the template in step 4 above) for the application to function correctly.
-2.  **Default Admin Account**:
-    *   **Email**: `admin@ktu.edu`
-    *   **Password**: `admin123`
-    *   *Note: This account is automatically created on the first run (see bottom of `app.py`).*
-
-## Usage
+    
+## Account Creation
 
 1.  Register for a new account or log in.
 2.  Click on **New Analysis**.
