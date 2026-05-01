@@ -1,0 +1,337 @@
+{% extends "dashboard_layout.html" %}
+
+{% block title %}GPA Calculator - KTU Result Analyzer{% endblock %}
+{% block page_title %}Academic GPA Calculator{% endblock %}
+
+{% block extra_head %}
+<style>
+    .calc-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        background: var(--btn-secondary-bg);
+        padding: 0.5rem;
+        border-radius: 16px;
+        width: fit-content;
+    }
+
+    .tab-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+        background: var(--primary-accent);
+        color: white;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .calc-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border: var(--glass-border);
+        border-radius: 24px;
+        padding: 2.5rem;
+        display: none;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    .calc-card.active {
+        display: block;
+    }
+
+    .calc-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 1.25rem;
+        margin-bottom: 1.25rem;
+        align-items: center;
+        background: var(--year-block-bg);
+        padding: 1rem;
+        border-radius: 14px;
+        border: var(--glass-border);
+        transition: 0.2s;
+    }
+
+    .calc-row:hover {
+        border-color: rgba(99, 102, 241, 0.3);
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .form-select,
+    .form-input {
+        width: 100%;
+        background: var(--input-bg);
+        border: var(--glass-border);
+        color: var(--text-primary);
+        padding: 0.85rem 1rem;
+        border-radius: 10px;
+        font-family: inherit;
+        outline: none;
+        transition: 0.2s;
+    }
+
+    .form-select:focus,
+    .form-input:focus {
+        border-color: var(--primary-accent);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-select option {
+        background-color: var(--bg-color);
+        color: var(--text-primary);
+        padding: 10px;
+    }
+
+    /* Target specific browser overrides */
+    .form-select:focus>option {
+        background-color: var(--bg-color) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .btn-add {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary-accent);
+        border: 1px dashed var(--primary-accent);
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+    }
+
+    .btn-add:hover {
+        background: var(--primary-accent);
+        color: white;
+    }
+
+    .result-display {
+        margin-top: 3rem;
+        text-align: center;
+        padding: 2.5rem;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 20px;
+        display: none;
+    }
+
+    .result-value {
+        font-size: 4rem;
+        font-weight: 800;
+        color: #10b981;
+        margin: 0.5rem 0;
+        text-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="calculator-view">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div class="calc-tabs">
+            <button class="tab-btn active" id="sgpaTabBtn" onclick="switchTab('sgpa')">SGPA Calculator</button>
+            <button class="tab-btn" id="cgpaTabBtn" onclick="switchTab('cgpa')">CGPA Calculator</button>
+        </div>
+
+        <div
+            style="background: var(--btn-secondary-bg); padding: 0.5rem; border-radius: 16px; border: var(--glass-border); display: flex; align-items: center; gap: 0.75rem;">
+            <span
+                style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-left: 0.5rem;">SCHEME</span>
+            <select id="schemeSelector" onchange="updateScheme()" class="form-select"
+                style="width: auto; padding: 0.4rem 1rem; border-radius: 10px; font-size: 0.9rem;">
+                <option value="2019">KTU 2019 Scheme</option>
+                <option value="2024">KTU 2024 Scheme</option>
+                <option value="2015">KTU 2015 Scheme</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- SGPA Calculator -->
+    <div id="sgpa" class="calc-card active">
+        <div id="sgpa-rows-container">
+            <div
+                style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1.25rem; margin-bottom: 0.75rem; padding: 0 1rem; color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">
+                <div>Grade</div>
+                <div>Credits</div>
+                <div style="width: 36px;"></div>
+            </div>
+            <div id="sgpa-rows"></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem;">
+            <button class="btn-add" onclick="addSgpaRow()">
+                <i class="ph ph-plus-circle"></i> Add Subject
+            </button>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn-primary" style="margin:0; width: auto; padding: 0.85rem 2rem;"
+                    onclick="calculateSGPA()">Calculate SGPA</button>
+                <button onclick="resetSGPA()"
+                    style="background: var(--btn-secondary-bg); border: var(--glass-border); color: var(--text-secondary); padding: 0.85rem; border-radius: 12px; cursor: pointer;">
+                    <i class="ph ph-arrows-counter-clockwise"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="sgpa-result" class="result-display">
+            <div style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 700; text-transform: uppercase;">
+                Your SGPA</div>
+            <div class="result-value" id="sgpa-value">0.00</div>
+            <div id="sgpa-details" style="color: var(--text-secondary); margin-top: 0.5rem; font-weight: 500;"></div>
+        </div>
+    </div>
+
+    <!-- CGPA Calculator -->
+    <div id="cgpa" class="calc-card">
+        <div id="cgpa-rows-container">
+            <div
+                style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1.25rem; margin-bottom: 0.75rem; padding: 0 1rem; color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">
+                <div>Semester SGPA</div>
+                <div>Credits</div>
+                <div style="width: 36px;"></div>
+            </div>
+            <div id="cgpa-rows"></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem;">
+            <button class="btn-add" onclick="addCgpaRow()">
+                <i class="ph ph-plus-circle"></i> Add Semester
+            </button>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn-primary" style="margin:0; width: auto; padding: 0.85rem 2rem;"
+                    onclick="calculateCGPA()">Calculate CGPA</button>
+                <button onclick="resetCGPA()"
+                    style="background: var(--btn-secondary-bg); border: var(--glass-border); color: var(--text-secondary); padding: 0.85rem; border-radius: 12px; cursor: pointer;">
+                    <i class="ph ph-arrows-counter-clockwise"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="cgpa-result" class="result-display">
+            <div style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 700; text-transform: uppercase;">
+                Your CGPA</div>
+            <div class="result-value" id="cgpa-value">0.00</div>
+            <div id="cgpa-details" style="color: var(--text-secondary); margin-top: 0.5rem; font-weight: 500;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const gradePoints = {
+        '2019': { 'S': 10, 'A+': 9, 'A': 8.5, 'B+': 8, 'B': 7.5, 'C+': 7, 'C': 6.5, 'D': 6, 'P': 5.5, 'F': 0 },
+        '2024': { 'O': 10, 'A+': 9, 'A': 8, 'B+': 7, 'B': 6, 'C': 5, 'F': 0 },
+        '2015': { 'O': 10, 'A+': 9, 'A': 8, 'B+': 7, 'B': 6, 'C': 5, 'P': 4, 'F': 0 }
+    };
+
+    let scheme = '2019';
+
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tab + 'TabBtn').classList.add('active');
+        document.querySelectorAll('.calc-card').forEach(card => card.classList.remove('active'));
+        document.getElementById(tab).classList.add('active');
+    }
+
+    function updateScheme() {
+        scheme = document.getElementById('schemeSelector').value;
+        const selects = document.querySelectorAll('.sgpa-grade');
+        selects.forEach(select => {
+            const currentVal = select.value;
+            populateGradeSelect(select);
+            if (gradePoints[scheme][currentVal]) select.value = currentVal;
+        });
+    }
+
+    function populateGradeSelect(select) {
+        const currentVal = select.value;
+        select.innerHTML = '<option value="" disabled selected>Grade</option>';
+        Object.keys(gradePoints[scheme]).forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g;
+            opt.textContent = `${g} (${gradePoints[scheme][g]})`;
+            select.appendChild(opt);
+        });
+        if (currentVal && gradePoints[scheme][currentVal]) select.value = currentVal;
+    }
+
+    function addSgpaRow() {
+        const row = document.createElement('div');
+        row.className = 'calc-row';
+        row.innerHTML = `
+            <select class="form-select sgpa-grade"></select>
+            <input type="number" class="form-input sgpa-credit" placeholder="Credits" step="0.5" min="0">
+            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="ph ph-trash"></i></button>
+        `;
+        populateGradeSelect(row.querySelector('select'));
+        document.getElementById('sgpa-rows').appendChild(row);
+    }
+
+    function addCgpaRow() {
+        const row = document.createElement('div');
+        row.className = 'calc-row';
+        row.innerHTML = `
+            <input type="number" class="form-input cgpa-sgpa" placeholder="SGPA" step="0.01" min="0" max="10">
+            <input type="number" class="form-input cgpa-credit" placeholder="Total Credits" step="0.5" min="0">
+            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="ph ph-trash"></i></button>
+        `;
+        document.getElementById('cgpa-rows').appendChild(row);
+    }
+
+    function calculateSGPA() {
+        let totalPoints = 0;
+        let totalCredits = 0;
+        document.querySelectorAll('.calc-row').forEach(row => {
+            const grade = row.querySelector('.sgpa-grade')?.value;
+            const credit = parseFloat(row.querySelector('.sgpa-credit')?.value);
+            if (grade && !isNaN(credit)) {
+                totalPoints += gradePoints[scheme][grade] * credit;
+                totalCredits += credit;
+            }
+        });
+        const res = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
+        document.getElementById('sgpa-value').textContent = res;
+        document.getElementById('sgpa-details').textContent = `Based on ${totalCredits} credits`;
+        document.getElementById('sgpa-result').style.display = 'block';
+    }
+
+    function calculateCGPA() {
+        let totalPoints = 0;
+        let totalCredits = 0;
+        document.querySelectorAll('#cgpa .calc-row').forEach(row => {
+            const sgpa = parseFloat(row.querySelector('.cgpa-sgpa')?.value);
+            const credit = parseFloat(row.querySelector('.cgpa-credit')?.value);
+            if (!isNaN(sgpa) && !isNaN(credit)) {
+                totalPoints += sgpa * credit;
+                totalCredits += credit;
+            }
+        });
+        const res = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
+        document.getElementById('cgpa-value').textContent = res;
+        document.getElementById('cgpa-details').textContent = `Cumulative across ${totalCredits} credits`;
+        document.getElementById('cgpa-result').style.display = 'block';
+    }
+
+    function resetSGPA() { document.getElementById('sgpa-rows').innerHTML = ''; for (let i = 0; i < 6; i++) addSgpaRow(); document.getElementById('sgpa-result').style.display = 'none'; }
+    function resetCGPA() { document.getElementById('cgpa-rows').innerHTML = ''; for (let i = 0; i < 4; i++) addCgpaRow(); document.getElementById('cgpa-result').style.display = 'none'; }
+
+    document.addEventListener('DOMContentLoaded', () => { resetSGPA(); resetCGPA(); });
+</script>
+{% endblock %}

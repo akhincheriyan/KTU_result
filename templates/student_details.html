@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details - KTU Result Analyzer</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background-image:
+                radial-gradient(at 0% 0%, var(--grad-1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, var(--grad-2) 0px, transparent 50%);
+        }
+
+        .standalone-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            background: rgba(var(--bg-color-rgb), 0.5);
+            z-index: 1000;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo-box div {
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px -4px rgba(99, 102, 241, 0.4);
+        }
+
+        .logo-box span {
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: -0.02em;
+        }
+
+        .theme-btn {
+            background: var(--btn-secondary-bg);
+            border: var(--glass-border);
+            color: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .theme-btn:hover {
+            color: var(--primary-accent);
+            transform: scale(1.05);
+        }
+
+        .page-container {
+            width: 100%;
+            max-width: 1200px;
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-top: 6rem;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: var(--glass-border);
+            border-radius: 32px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .student-list-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 400px;
+            font-family: monospace;
+        }
+
+        .filters-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 24px;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state {
+            color: var(--text-secondary);
+            font-style: italic;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .btn-premium-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--btn-secondary-bg);
+            border: var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-premium-nav:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="standalone-header">
+        <a href="{{ url_for('view_analysis', entry_id=entry_id) }}" class="btn-premium-nav">
+            <i class="ph-bold ph-arrow-left"></i> Back to Results
+        </a>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div style="text-align: right; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">{{ user.name }}</span>
+                <a href="{{ url_for('logout') }}" style="font-size: 0.75rem; color: var(--text-secondary); text-decoration: none;">Logout</a>
+            </div>
+            <button class="theme-btn" id="themeToggle" title="Toggle Theme">
+                <i class="ph ph-moon"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="page-container">
+        <div class="tool-card">
+            <header style="margin-bottom: 3.5rem; text-align: center;">
+                <h1 style="font-size: 2.22rem; font-weight: 800; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--text-primary), var(--primary-accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Student Performance Details</h1>
+                <p style="color: var(--text-secondary); font-size: 1.05rem;">
+                    Detailed analytics and filtering for specific subject performance
+                </p>
+            </header>
+
+            <div class="filters-container">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="background: rgba(99, 102, 241, 0.1); padding: 0.6rem; border-radius: 12px; color: var(--primary-accent);">
+                        <i class="ph-bold ph-buildings" style="font-size: 1.25rem;"></i>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label for="deptSelect" style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Department</label>
+                        <select id="deptSelect" onchange="updateSubjects()" style="background: transparent; border: none; color: var(--text-primary); font-family: inherit; font-size: 1.1rem; font-weight: 700; cursor: pointer; outline: none; min-width: 200px; padding: 0;">
+                            <option value="" disabled selected>Select Department</option>
+                            {% for dept in stats.departments %}
+                            <option value="{{ dept }}" style="background: #1e293b; color: white;">{{ dept }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div style="width: 1px; height: 40px; background: var(--glass-border); display: block;"></div>
+
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="background: rgba(16, 185, 129, 0.1); padding: 0.6rem; border-radius: 12px; color: #10b981;">
+                        <i class="ph-bold ph-book-open" style="font-size: 1.25rem;"></i>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label for="subjectSelect" style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Subject</label>
+                        <select id="subjectSelect" onchange="updateStudentLists()" style="background: transparent; border: none; color: var(--text-primary); font-family: inherit; font-size: 1.1rem; font-weight: 700; cursor: pointer; outline: none; min-width: 240px; padding: 0;" disabled>
+                            <option value="">Select Department First</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultsContent" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; opacity: 0; transition: opacity 0.4s ease;">
+
+            <!-- Top Scorers Panel -->
+            <div class="list-container">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <div
+                        style="background: rgba(16, 185, 129, 0.1); padding: 0.5rem; border-radius: 50%; color: #10b981;">
+                        <i class="ph ph-star" style="font-size: 1.5rem;" weight="fill"></i>
+                    </div>
+                    <h2 style="margin: 0; font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Top Scorers
+                    </h2>
+                    <span
+                        style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; margin-left: auto;">Grades:
+                        O, S, A+, A</span>
+                </div>
+                <div class="student-list-box top-scorers-box" id="topScorersBox">
+                    <div class="empty-state">Select a subject to view top scorers</div>
+                </div>
+            </div>
+
+            <!-- Other Passed Students Panel -->
+            <div class="list-container">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <div
+                        style="background: rgba(99, 102, 241, 0.1); padding: 0.5rem; border-radius: 50%; color: var(--primary-accent);">
+                        <i class="ph ph-check-circle" style="font-size: 1.5rem;" weight="fill"></i>
+                    </div>
+                    <h2 style="margin: 0; font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Passed
+                        Students</h2>
+                    <span
+                        style="background: rgba(99, 102, 241, 0.1); color: var(--primary-accent); padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; margin-left: auto;">Grades:
+                        B, C, D, P</span>
+                </div>
+                <div class="student-list-box" id="otherPassedBox"
+                    style="border-left: 4px solid var(--primary-accent); background: rgba(99, 102, 241, 0.05);">
+                    <div class="empty-state">Select a subject to view passed students</div>
+                </div>
+            </div>
+
+            <!-- Failed Students Panel -->
+            <div class="list-container">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <div
+                        style="background: rgba(239, 68, 68, 0.1); padding: 0.5rem; border-radius: 50%; color: #ef4444;">
+                        <i class="ph ph-warning-circle" style="font-size: 1.5rem;" weight="fill"></i>
+                    </div>
+                    <h2 style="margin: 0; font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Failed
+                        Students</h2>
+                    <span
+                        style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; margin-left: auto;">Includes:
+                        Withheld, Absent, I</span>
+                </div>
+                <div class="student-list-box failed-students-box" id="failedStudentsBox">
+                    <div class="empty-state">Select a subject to view failed students</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Global stats data passed from Flask
+        const allStats = {{ stats | tojson | safe }};
+
+        // Initialize Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+
+        function updateThemeIcon(theme) {
+            themeIcon.className = theme === 'dark' ? 'ph ph-moon' : 'ph ph-sun';
+        }
+
+        updateThemeIcon(document.documentElement.getAttribute('data-theme'));
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        // Application Logic
+        function updateSubjects() {
+            const deptSelect = document.getElementById('deptSelect');
+            const subjectSelect = document.getElementById('subjectSelect');
+            const dept = deptSelect.value;
+
+            // Hide results when changing department
+            document.getElementById('resultsContent').style.opacity = '0';
+
+            if (!dept) {
+                subjectSelect.innerHTML = '<option value="">Select Department First</option>';
+                subjectSelect.disabled = true;
+                return;
+            }
+
+            // Populate subjects for the selected department
+            let subjects = new Set();
+
+            // Get subjects from most recent year (current subjects)
+            if (allStats.dept_sub_stats[dept]) {
+                const years = Object.keys(allStats.dept_sub_stats[dept]).sort().reverse();
+                if (years.length > 0) {
+                    for (const sub in allStats.dept_sub_stats[dept][years[0]]) {
+                        subjects.add(sub);
+                    }
+                }
+            }
+
+            let optionsHTML = '<option value="" disabled selected>Select Subject</option>';
+
+            const sortedSubjects = Array.from(subjects).sort();
+            for (const sub of sortedSubjects) {
+                optionsHTML += `<option value="${sub}" style="background: #1e293b; color: white;">${sub}</option>`;
+            }
+
+            subjectSelect.innerHTML = optionsHTML;
+            subjectSelect.disabled = false;
+        }
+
+        function updateStudentLists() {
+            const dept = document.getElementById('deptSelect').value;
+            const sub = document.getElementById('subjectSelect').value;
+            const resultsContent = document.getElementById('resultsContent');
+            const topScorersBox = document.getElementById('topScorersBox');
+            const otherPassedBox = document.getElementById('otherPassedBox');
+            const failedStudentsBox = document.getElementById('failedStudentsBox');
+
+            if (!dept || !sub) return;
+
+            // Show results section
+            resultsContent.style.opacity = '1';
+
+            // Find subject data across years (prioritize most recent)
+            const years = Object.keys(allStats.dept_sub_stats[dept]).sort().reverse();
+            let lists = { topper_8_above: [], above_7_5: [], other_passed: [], fail_detailed: [] };
+
+            for (const year of years) {
+                if (allStats.dept_sub_stats[dept][year][sub] && allStats.dept_sub_stats[dept][year][sub].student_lists) {
+                    lists = allStats.dept_sub_stats[dept][year][sub].student_lists;
+                    break;
+                }
+            }
+
+            // Map and consolidate student data
+            // Structure from backend: 
+            // - top/other: [reg, grade, (optional) name]
+            // - fail: [reg, (optional) name]
+            
+            const topRegs = [
+                ...lists.topper_8_above.map(i => ({reg: i[0], grade: i[1], name: i[2]})),
+                ...lists.above_7_5.map(i => ({reg: i[0], grade: i[1], name: i[2]}))
+            ];
+            const otherRegs = (lists.other_passed || []).map(i => ({reg: i[0], grade: i[1], name: i[2]}));
+            const failRegs = (lists.fail_detailed || []).map(i => ({reg: i[0], name: i[1]}));
+
+            // Rendering
+            topScorersBox.innerHTML = formatListHtml(topRegs, true);
+            otherPassedBox.innerHTML = formatListHtml(otherRegs, true);
+            failedStudentsBox.innerHTML = formatListHtml(failRegs, false);
+        }
+
+        function formatListHtml(students, showGrade) {
+            if (!students || students.length === 0) {
+                return '<div class="empty-state">No students found for this criteria</div>';
+            }
+
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+            students.forEach(s => {
+                const nameDisplay = s.name && s.name !== '-' ? 
+                    `<div style="color: var(--text-secondary); font-size: 0.8rem; font-family: 'Inter', sans-serif; font-weight: 500; margin-top: 2px;">${s.name}</div>` : '';
+                
+                const gradeDisplay = showGrade ? 
+                    `<div style="margin-left: auto; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 8px; font-size: 0.9rem; font-weight: 700; color: var(--primary-accent); min-width: 35px; text-align: center;">${s.grade}</div>` : '';
+                
+                html += `
+                <div style="background: var(--card-bg); border: var(--glass-border); padding: 1rem 1.25rem; border-radius: 14px; display: flex; align-items: center; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='var(--primary-accent)'; this.style.boxShadow='0 10px 15px -3px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--glass-border)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-weight: 800; font-family: monospace; font-size: 1.1rem; letter-spacing: 0.025em; color: var(--text-primary);">${s.reg}</span>
+                        ${nameDisplay}
+                    </div>
+                    ${gradeDisplay}
+                </div>`;
+            });
+            html += '</div>';
+
+            return html;
+        }
+    </script>
+</body>
+
+</html>

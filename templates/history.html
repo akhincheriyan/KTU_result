@@ -1,0 +1,176 @@
+{% extends "dashboard_layout.html" %}
+
+{% block title %}History - KTU Result Analyzer{% endblock %}
+{% block page_title %}Analysis History{% endblock %}
+
+{% block content %}
+<div class="history-container" style="animation: fadeInUp 0.5s ease-out;">
+    <div style="background: var(--card-bg); border: var(--glass-border); border-radius: 20px; padding: 2rem;">
+        <form id="bulkDeleteForm" action="/bulk_delete" method="POST">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                    <div class="select-all-container"
+                        style="display: flex; align-items: center; gap: 0.5rem; background: var(--btn-secondary-bg); padding: 0.5rem 1rem; border-radius: 10px; border: var(--glass-border);">
+                        <input type="checkbox" id="selectAll"
+                            style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-accent);">
+                        <label for="selectAll"
+                            style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); cursor: pointer;">Select
+                            All</label>
+                    </div>
+                    <button type="submit" id="deleteSelectedBtn" disabled
+                        style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--danger); padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-weight: 600; transition: 0.3s; opacity: 0.5; pointer-events: none;">
+                        <i class="ph ph-trash"></i>
+                        <span>Delete Selected</span>
+                    </button>
+                </div>
+
+                {% if history %}
+                <a href="/clear_history"
+                    onclick="return confirm('Attention: This will permanently delete ALL analyzed files and history records. Continue?');"
+                    style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1); color: var(--text-secondary); padding: 0.6rem 1.25rem; border-radius: 10px; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500; transition: 0.3s;">
+                    <i class="ph ph-warning-circle"></i>
+                    <span>Clear Everything</span>
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="history-list">
+                {% if history %}
+                {% for item in history %}
+                <div class="history-item" style="padding: 1.25rem 2rem; position: relative;">
+                    <div style="margin-right: 1.5rem; display: flex; align-items: center;">
+                        <input type="checkbox" name="entry_ids" value="{{ item.id }}" class="item-checkbox"
+                            style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--primary-accent);">
+                    </div>
+                    <div class="history-icon" style="background: rgba(99, 102, 241, 0.1); width: 48px; height: 48px;">
+                        <i class="ph ph-file-pdf" style="font-size: 1.8rem; color: var(--primary-accent);"></i>
+                    </div>
+                    <div class="history-info">
+                        <div class="history-name" style="font-size: 1.05rem;">{{ item.filename }}</div>
+                        <div class="history-date" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="ph ph-calendar"></i>
+                            {{ item.date }}
+                        </div>
+                    </div>
+                    <div class="history-actions" style="gap: 0.75rem;">
+                        <a href="{{ url_for('view_analysis', entry_id=item.id) }}" class="btn-action-dash"
+                            title="View Analytics">
+                            <i class="ph ph-chart-line-up"></i>
+                            <span>View</span>
+                        </a>
+                        <a href="{{ url_for('download_file', filename=item.excel_filename) }}" class="btn-action-dash"
+                            style="background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.2);"
+                            title="Download Report">
+                            <i class="ph ph-file-xls"></i>
+                            <span>Excel</span>
+                        </a>
+                        <a href="{{ url_for('delete_entry', entry_id=item.id) }}" class="btn-icon btn-danger"
+                            title="Delete" onclick="return confirm('Delete this record?');">
+                            <i class="ph ph-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div style="text-align: center; padding: 5rem 2rem;">
+                    <div
+                        style="background: var(--btn-secondary-bg); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                        <i class="ph ph-clock-counter-clockwise"
+                            style="font-size: 3rem; color: var(--text-secondary); opacity: 0.3;"></i>
+                    </div>
+                    <h3 style="color: var(--text-primary); margin-bottom: 0.75rem;">Workspace is Empty</h3>
+                    <p style="color: var(--text-secondary); max-width: 300px; margin: 0 auto 2rem;">You haven't analyzed
+                        any
+                        result PDFs yet.</p>
+                    <a href="/" class="btn-primary"
+                        style="display: inline-block; width: auto; padding-left: 3rem; padding-right: 3rem;">Upload
+                        Now</a>
+                </div>
+                {% endif %}
+            </div>
+        </form>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const selectAll = document.getElementById('selectAll');
+                const checkboxes = document.querySelectorAll('.item-checkbox');
+                const deleteBtn = document.getElementById('deleteSelectedBtn');
+
+                function updateDeleteButton() {
+                    const checkedCount = document.querySelectorAll('.item-checkbox:checked').length;
+                    if (checkedCount > 0) {
+                        deleteBtn.disabled = false;
+                        deleteBtn.style.opacity = '1';
+                        deleteBtn.style.pointerEvents = 'auto';
+                        deleteBtn.style.background = 'rgba(239, 68, 68, 0.2)';
+                    } else {
+                        deleteBtn.disabled = true;
+                        deleteBtn.style.opacity = '0.5';
+                        deleteBtn.style.pointerEvents = 'none';
+                        deleteBtn.style.background = 'rgba(239, 68, 68, 0.1)';
+                    }
+                }
+
+                if (selectAll) {
+                    selectAll.addEventListener('change', function () {
+                        checkboxes.forEach(cb => {
+                            cb.checked = selectAll.checked;
+                        });
+                        updateDeleteButton();
+                    });
+                }
+
+                checkboxes.forEach(cb => {
+                    cb.addEventListener('change', function () {
+                        const allChecked = Array.from(checkboxes).every(c => c.checked);
+                        selectAll.checked = allChecked;
+                        updateDeleteButton();
+                    });
+                });
+
+                document.getElementById('bulkDeleteForm').addEventListener('submit', function (e) {
+                    if (!confirm(`Are you sure you want to delete ${document.querySelectorAll('.item-checkbox:checked').length} records?`)) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        </script>
+    </div>
+</div>
+
+<style>
+    .btn-action-dash {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--btn-secondary-bg);
+        color: var(--text-primary);
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: var(--glass-border);
+        transition: 0.2s;
+    }
+
+    .btn-action-dash:hover {
+        background: var(--primary-accent);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

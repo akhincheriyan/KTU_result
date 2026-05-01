@@ -1,0 +1,225 @@
+[
+    {
+        "id": "b0ef0067-d82d-414a-9a40-13b405622177",
+        "user_id": 3,
+        "filename": "S3 result_BMC.pdf",
+        "excel_filename": "B_Tech_S3_R_Exam_Nov_2025_2024_Scheme_S3_Result_3_20260430_195437.xlsx",
+        "source_excel": "B_Tech_S3_R_Exam_Nov_2025_2024_Scheme_S3_Result_3_20260430_195437.xlsx",
+        "date": "2026-04-30 19:54:39"
+    },
+    {
+        "id": "4d75ce88-8375-4b68-bffa-bf0440fb5b37",
+        "user_id": 3,
+        "filename": "result_BMC (3).pdf",
+        "excel_filename": "B_Tech_S6_S_FE_Exam_Dec_2025_2019_Scheme_S6_Result_3_20260430_195128.xlsx",
+        "source_excel": "B_Tech_S6_S_FE_Exam_Dec_2025_2019_Scheme_S6_Result_3_20260430_195128.xlsx",
+        "date": "2026-04-30 19:51:29"
+    },
+    {
+        "id": "3098ce52-64bf-4078-b6b4-e21d29b15554",
+        "user_id": 2,
+        "filename": "S3 result_BMC.pdf",
+        "excel_filename": "B_Tech_S3_R_Exam_Nov_2025_2024_Scheme_S3_Result_2_20260324_234724.xlsx",
+        "source_excel": "B_Tech_S3_R_Exam_Nov_2025_2024_Scheme_S3_Result_2_20260324_234724.xlsx",
+        "date": "2026-03-24 23:47:25",
+        "mapped_excel_filename": "S3_result_BMC_Student_Roll_List-S4_CSE_A-CSE_2019_234740.xlsx"
+    },
+    {
+        "id": "c0317ff7-5d43-499c-b229-a4b3c54ea446",
+        "user_id": 2,
+        "filename": "S3 result_BMC.pdf",
+        "excel_filename": "B_Tech_S3_R_Exam_Nov_2025_2024_Scheme_S3_Result_2_20260324_233606.xlsx",
+        "source_excel": "B_Tech_S3_R_Exam_Nov_2025_2024_Scheme_S3_Result_2_20260324_233606.xlsx",
+        "date": "2026-03-24 23:36:06",
+        "mapped_excel_filename": "S3_result_BMC_Student_Roll_List-S4_CSE_A-CSE_2019_233623.xlsx"
+    },
+    {
+        "id": "479518fb-4593-4241-9aaa-5b5f7071a6f2",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_233329.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_233329.xlsx",
+        "date": "2026-03-24 23:33:29",
+        "mapped_excel_filename": "result_BMC_1_Student_Roll_List-S5_CS-B-CSE_2019_233429.xlsx"
+    },
+    {
+        "id": "139b209e-b190-4343-b43d-464bd70f9629",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_232753.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_232753.xlsx",
+        "date": "2026-03-24 23:27:54",
+        "mapped_excel_filename": "result_BMC_1_Student_Roll_List-S5_CS-B-CSE_2019_232805.xlsx"
+    },
+    {
+        "id": "6be2cb6a-4585-443b-968f-1df8f8f7fecf",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_231042.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_231042.xlsx",
+        "date": "2026-03-24 23:10:43",
+        "mapped_excel_filename": "result_BMC_1_Student_Roll_List-S5_CS-A-CSE_2019_1_231641.xlsx"
+    },
+    {
+        "id": "f5cd6a79-76c9-4b23-98f8-1e99a6aeb40c",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_230236.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_230236.xlsx",
+        "date": "2026-03-24 23:02:37"
+    },
+    {
+        "id": "0823e53e-3711-4ebd-a125-f059d211cf17",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_230027.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_230027.xlsx",
+        "date": "2026-03-24 23:00:29"
+    },
+    {
+        "id": "db68777b-ad3d-4aa4-b611-f29826d85454",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_225736.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_225736.xlsx",
+        "date": "2026-03-24 22:57:37"
+    },
+    {
+        "id": "86a86d84-fcdd-40d8-a355-f5dee864d8d3",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_225001.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_225001.xlsx",
+        "date": "2026-03-24 22:50:02"
+    },
+    {
+        "id": "da8b541b-0b74-4046-a4d4-aa427304235d",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_224053.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_224053.xlsx",
+        "date": "2026-03-24 22:40:54"
+    },
+    {
+        "id": "2b979f7e-ed7d-42a4-bf7a-876ff4852019",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_222612.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_222612.xlsx",
+        "date": "2026-03-24 22:26:12"
+    },
+    {
+        "id": "eb1d04e4-909c-4afc-bca1-bca5aa26e1a7",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_222139.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_222139.xlsx",
+        "date": "2026-03-24 22:21:40"
+    },
+    {
+        "id": "4ab9a576-7595-4122-84a1-f19613ff7c67",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_221501.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_221501.xlsx",
+        "date": "2026-03-24 22:15:02"
+    },
+    {
+        "id": "2423d049-8490-43eb-829b-4d1fc0795d5c",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_220027.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_220027.xlsx",
+        "date": "2026-03-24 22:00:29"
+    },
+    {
+        "id": "76db0f5d-e320-4c02-8265-dca782420514",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_215256.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_215256.xlsx",
+        "date": "2026-03-24 21:52:57"
+    },
+    {
+        "id": "2e48fe3b-a7ad-403d-be3c-beb97e0ed6ef",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_214702.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_214702.xlsx",
+        "date": "2026-03-24 21:47:03"
+    },
+    {
+        "id": "29ca1159-06e3-4a5a-9ce2-563fa5d761be",
+        "user_id": 2,
+        "filename": "result_BMC - MBA.pdf",
+        "excel_filename": "MBA_S3_R_S_Examination_Nov_2025_S3_Result_2_20260324_214523.xlsx",
+        "source_excel": "MBA_S3_R_S_Examination_Nov_2025_S3_Result_2_20260324_214523.xlsx",
+        "date": "2026-03-24 21:45:24"
+    },
+    {
+        "id": "322bec3b-54b4-4b25-9036-254443236639",
+        "user_id": 2,
+        "filename": "result_BMC - MBA.pdf",
+        "excel_filename": "MBA_S3_R_S_Examination_Nov_2025_S3_Result_2_20260324_213929.xlsx",
+        "source_excel": "MBA_S3_R_S_Examination_Nov_2025_S3_Result_2_20260324_213929.xlsx",
+        "date": "2026-03-24 21:39:29"
+    },
+    {
+        "id": "46b9ca24-ce1d-41c8-aaab-40bbfd7bf275",
+        "user_id": 2,
+        "filename": "result_BMC - 2026-03-24T153451.747.pdf",
+        "excel_filename": "B_Tech_S1_R_S_Exam_Dec_2025_2024_Scheme_S1_Result_2_20260324_213631.xlsx",
+        "source_excel": "B_Tech_S1_R_S_Exam_Dec_2025_2024_Scheme_S1_Result_2_20260324_213631.xlsx",
+        "date": "2026-03-24 21:36:32"
+    },
+    {
+        "id": "7896968a-2495-4895-bbe7-ae412a85f00a",
+        "user_id": 2,
+        "filename": "result_BJK.pdf",
+        "excel_filename": "B_Tech_S7_R_S_Exam_Nov_2025_2019_Scheme_S7_Result_2_20260324_213503.xlsx",
+        "source_excel": "B_Tech_S7_R_S_Exam_Nov_2025_2019_Scheme_S7_Result_2_20260324_213503.xlsx",
+        "date": "2026-03-24 21:35:04"
+    },
+    {
+        "id": "3b506dcb-f6d5-4449-9c9d-86601e610191",
+        "user_id": 2,
+        "filename": "result_BJK.pdf",
+        "excel_filename": "B_Tech_S7_R_S_Exam_Nov_2025_2019_Scheme_S7_Result_2_20260324_213123.xlsx",
+        "source_excel": "B_Tech_S7_R_S_Exam_Nov_2025_2019_Scheme_S7_Result_2_20260324_213123.xlsx",
+        "date": "2026-03-24 21:31:24"
+    },
+    {
+        "id": "d50565a0-cf3d-40b5-b718-8bad388d1873",
+        "user_id": 2,
+        "filename": "result_BJK.pdf",
+        "excel_filename": "B_Tech_S7_R_S_Exam_Nov_2025_2019_Scheme_S7_Result_2_20260324_205558.xlsx",
+        "source_excel": "B_Tech_S7_R_S_Exam_Nov_2025_2019_Scheme_S7_Result_2_20260324_205558.xlsx",
+        "date": "2026-03-24 20:55:59"
+    },
+    {
+        "id": "61e05a8b-8209-4b8d-bd30-d764d5453cc4",
+        "user_id": 2,
+        "filename": "result_BMC - 2026-03-24T153451.747.pdf",
+        "excel_filename": "B_Tech_S1_R_S_Exam_Dec_2025_2024_Scheme_S1_Result_2_20260324_203134.xlsx",
+        "source_excel": "B_Tech_S1_R_S_Exam_Dec_2025_2024_Scheme_S1_Result_2_20260324_203134.xlsx",
+        "date": "2026-03-24 20:31:35",
+        "mapped_excel_filename": "result_BMC_-_2026-03-24T153451_747_s1_CSE_B_203442.xlsx"
+    },
+    {
+        "id": "36ba1982-f744-4e42-b875-00ee86fb2ea2",
+        "user_id": 2,
+        "filename": "result_BMC - MBA.pdf",
+        "excel_filename": "MBA_S3_R_S_Examination_Nov_2025_S3_Result_2_20260324_202120.xlsx",
+        "source_excel": "MBA_S3_R_S_Examination_Nov_2025_S3_Result_2_20260324_202120.xlsx",
+        "date": "2026-03-24 20:21:21"
+    },
+    {
+        "id": "4d2611d3-1acd-43a6-b045-5fc05c40da21",
+        "user_id": 2,
+        "filename": "result_BMC (1).pdf",
+        "excel_filename": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_200507.xlsx",
+        "source_excel": "B_Tech_S5_R_S_Exam_Nov_2025_2019_Scheme_S5_Result_2_20260324_200507.xlsx",
+        "date": "2026-03-24 20:05:08",
+        "mapped_excel_filename": "result_BMC_1_Student_Roll_List-S5_CS-A-CSE_2019_1_200751.xlsx"
+    }
+]

@@ -1,0 +1,181 @@
+{% extends "dashboard_layout.html" %}
+
+{% block title %}Converter - KTU Result Analyzer{% endblock %}
+{% block page_title %}PDF to Analytics Converter{% endblock %}
+
+{% block content %}
+<div class="converter-box" style="animation: fadeInUp 0.5s ease-out;">
+    <div class="upload-card" style="max-width: 100%; margin: 0; padding: 4rem 2rem;">
+        <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+            <div class="drop-zone" id="dropZone" style="padding: 4rem;">
+                <i class="ph ph-file-pdf"></i>
+                <h3 style="font-size: 1.5rem;">Upload Result PDF</h3>
+                <p style="margin-top: 1rem; color: var(--text-secondary);">Drop your KTU result file here or click to
+                    browse</p>
+                <input type="file" name="file" id="fileInput" accept=".pdf" style="display: none;" required>
+            </div>
+            <div id="fileInfo"
+                style="margin-top: 1.5rem; display: none; background: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.2);">
+                <span id="fileName" style="font-weight: 600; color: var(--primary-accent);"></span>
+            </div>
+            <button type="submit" class="btn-primary" style="max-width: 400px; margin-top: 2rem;">Start
+                Analysis</button>
+        </form>
+    </div>
+
+    <!-- Quick History Preview -->
+    <div style="margin-top: 3rem;">
+        <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Recently Processed</h3>
+        <div class="history-list">
+            {% if history %}
+            {% for item in history[:3] %}
+            <div class="history-item" style="background: var(--history-bg);">
+                <div class="history-icon">
+                    <i class="ph ph-file-xls" style="font-size: 1.5rem; color: #10b981;"></i>
+                </div>
+                <div class="history-info">
+                    <div class="history-name">{{ item.filename }}</div>
+                    <div class="history-date">{{ item.date }}</div>
+                </div>
+                <div class="history-actions">
+                    <a href="{{ url_for('view_analysis', entry_id=item.id) }}" class="btn-icon" title="View"><i
+                            class="ph ph-chart-bar"></i></a>
+                </div>
+            </div>
+            {% endfor %}
+            <a href="/history"
+                style="display: block; text-align: center; color: var(--primary-accent); margin-top: 1rem; text-decoration: none; font-weight: 600;">View
+                All in History →</a>
+            {% else %}
+            <div
+                style="padding: 2rem; text-align: center; color: var(--text-secondary); background: var(--card-bg); border-radius: 12px; border: 1px dashed var(--glass-border);">
+                No recent files to show.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="sheet-loader">
+        <div class="sheet-paper">
+            <div class="sheet-fill"></div>
+            <div class="sheet-lines">
+                <span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+    <div class="loading-percent">0%</div>
+    <div class="loading-text" id="loaderText">Starting...</div>
+    <div id="loaderSubText" style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">Initializing
+        analysis engine</div>
+</div>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const uploadForm = document.getElementById('uploadForm');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    let progressInterval;
+
+    uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (fileInput.files.length === 0) return;
+
+        loadingOverlay.classList.add('show');
+        const percentEl = document.querySelector('.loading-percent');
+        const textEl = document.getElementById('loaderText');
+        const subTextEl = document.getElementById('loaderSubText');
+
+        let percent = 0;
+        const messages = [
+            { p: 0, t: "Uploading PDF...", s: "Sending file to server" },
+            { p: 15, t: "Reading PDF Pages...", s: "Extracting text content" },
+            { p: 40, t: "Analyzing Results...", s: "Processing student grades and subjects" },
+            { p: 65, t: "Generating Stats...", s: "Calculating department-wise analytics" },
+            { p: 85, t: "Creating Excel Report...", s: "Organizing data into multiple sheets" },
+            { p: 95, t: "Finalizing...", s: "Preparing your results dashboard" }
+        ];
+
+        progressInterval = setInterval(() => {
+            if (percent < 99) {
+                let increment = 1;
+                if (percent < 40) increment = Math.floor(Math.random() * 5) + 3;
+                else if (percent < 80) increment = Math.floor(Math.random() * 3) + 1;
+                percent += increment;
+                if (percent > 99) percent = 99;
+
+                percentEl.textContent = `${percent}%`;
+                const currentMsg = messages.filter(m => percent >= m.p).slice(-1)[0];
+                if (currentMsg) {
+                    textEl.textContent = currentMsg.t;
+                    subTextEl.textContent = currentMsg.s;
+                }
+            }
+        }, 100);
+
+        try {
+            const formData = new FormData(uploadForm);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                clearInterval(progressInterval);
+                percentEl.textContent = "100%";
+                textEl.textContent = "Complete!";
+                subTextEl.textContent = "Redirecting to analysis...";
+
+                setTimeout(() => {
+                    window.location.href = result.redirect_url;
+                }, 500);
+            } else {
+                clearInterval(progressInterval);
+                alert('Error: ' + (result.message || 'Unknown error'));
+                loadingOverlay.classList.remove('show');
+            }
+        } catch (err) {
+            clearInterval(progressInterval);
+            console.error(err);
+            alert('An error occurred during upload.');
+            loadingOverlay.classList.remove('show');
+        }
+    });
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length) { fileInput.files = files; updateFileInfo(files[0]); }
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files.length) updateFileInfo(fileInput.files[0]); });
+
+    function updateFileInfo(file) {
+        fileInfo.style.display = 'block';
+        fileName.textContent = `File selected: ${file.name}`;
+    }
+</script>
+
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

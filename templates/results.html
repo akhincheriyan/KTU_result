@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - KTU Result Analyzer</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .user-nav {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--card-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            border: var(--glass-border);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            padding: 0.5rem;
+            border-radius: 50%;
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary-accent);
+            background: rgba(255, 255, 255, 0.05);
+            transform: rotate(15deg);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position: fixed; top: 2rem; left: 2rem; z-index: 1000;">
+        <a href="{{ url_for('dashboard') }}" class="btn-secondary"
+            style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.75rem 1.25rem; border-radius: 99px; background: var(--card-bg); border: var(--glass-border); color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; transition: 0.3s; backdrop-filter: blur(10px);">
+            <i class="ph ph-arrow-left"></i> New Analysis
+        </a>
+    </div>
+    <div class="user-nav">
+        <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+            <i class="ph ph-moon"></i>
+        </button>
+        <div style="width: 1px; height: 15px; background: rgba(255,255,255,0.1);"></div>
+        {% if user %}
+        <i class="ph ph-user-circle" style="font-size: 1.5rem; color: var(--primary-accent);"></i>
+        <span class="user-name" style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary);">{{ user.name
+            }}</span>
+        <div style="width: 1px; height: 15px; background: rgba(255,255,255,0.1);"></div>
+        <a href="/logout" class="btn-logout"
+            style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">Logout</a>
+        {% else %}
+        <a href="/login" class="btn-logout"
+            style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">Login</a>
+        {% endif %}
+    </div>
+    <div class="container">
+        <header style="margin-bottom: 2rem;">
+            <div class="app-logo">
+                <img src="{{ url_for('static', filename='favicon.png') }}" alt="Logo">
+            </div>
+            <h1>Analysis Complete</h1>
+            {% if filename %}
+            <div
+                style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); color: var(--primary-accent); display: inline-flex; align-items: center; gap: 8px; padding: 0.5rem 1rem; border-radius: 12px; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 500;">
+                <i class="ph ph-file-pdf"></i>
+                {{ filename }}
+            </div>
+            {% endif %}
+            <p>Here's a breakdown of the results from your uploaded PDF.</p>
+            <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <a href="{{ url_for('download_file', filename=excel_filename) }}" class="btn-primary"
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; width: auto; text-decoration: none;">
+                    <i class="ph ph-file-xls"></i> Download Excel Report
+                </a>
+                <a href="{{ url_for('map_names', entry_id=entry_id) }}" class="btn-secondary"
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; width: auto; text-decoration: none; padding: 0.75rem 1.25rem; border-radius: 99px; background: rgba(147, 51, 234, 0.1); border: 1px solid rgba(147, 51, 234, 0.2); color: #9333EA; font-weight: 600;">
+                    <i class="ph ph-user-plus"></i> Map Student Names
+                </a>
+                <a href="{{ url_for('student_details', entry_id=entry_id) }}" class="btn-secondary"
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; width: auto; text-decoration: none; padding: 0.75rem 1.25rem; border-radius: 99px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); color: var(--primary-accent); font-weight: 600;">
+                    <i class="ph ph-users"></i> View Student Details
+                </a>
+            </div>
+        </header>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Students</div>
+                <div class="stat-value" id="stat-total-students">{{ stats.total_students }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Entries Processed</div>
+                <div class="stat-value" id="stat-total-entries">{{ stats.total_entries }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Subjects Found</div>
+                <div class="stat-value" id="stat-subjects-found">{{ stats.subjects|length }}</div>
+            </div>
+        </div>
+
+        <!-- Chart Overview Section (Shown for "All") -->
+        <div id="overallVisuals" class="visual-analytics" style="margin-bottom: 3rem;">
+            <h2 style="margin-bottom: 1.5rem; font-weight: 600;">Visual Overview</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                <div class="stat-card" style="padding: 2rem;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-secondary);">Students by
+                        Department</h3>
+                    <div style="height: 300px;">
+                        <canvas id="deptChart"></canvas>
+                    </div>
+                </div>
+                <div class="stat-card" style="padding: 2rem;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-secondary);">Overall Pass
+                        Comparison</h3>
+                    <div style="height: 300px;">
+                        <canvas id="passComparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Department Specific Analytics (Shown when filtered) -->
+        <div id="deptSpecificDashboard" style="display: none; margin-bottom: 3rem;">
+            <div
+                style="display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+                    <h2 id="deptDashboardTitle" style="margin: 0; font-weight: 600;">Department Analytics</h2>
+                    <span style="color: var(--text-secondary); font-size: 0.95rem; font-weight: 500;">(based on the
+                        current student)</span>
+                </div>
+
+                <div
+                    style="display: flex; align-items: center; gap: 1rem; background: var(--card-bg); padding: 0.5rem 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                    <label for="subFilter"
+                        style="font-weight: 600; color: var(--text-secondary); font-size: 0.9rem;">View Subject:</label>
+                    <select id="subFilter" onchange="updateSubjectStats()"
+                        style="background: transparent; border: none; color: var(--primary-accent); font-weight: 700; font-size: 1rem; cursor: pointer; min-width: 150px; outline: none;">
+                        <option value="all">Overall Department</option>
+                    </select>
+                </div>
+            </div>
+            <div class="stats-grid" style="margin-bottom: 2rem;">
+                <div class="stat-card" style="text-align: center;">
+                    <div class="stat-value" id="dept-appeared" style="font-size: 2.5rem; margin-bottom: 0.5rem;">0</div>
+                    <div class="stat-label" style="text-transform: none; color: var(--text-secondary);">Total Appeared
+                    </div>
+                </div>
+                <div class="stat-card" style="text-align: center;">
+                    <div class="stat-value" id="dept-passed"
+                        style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #10b981;">0</div>
+                    <div class="stat-label" style="text-transform: none; color: var(--text-secondary);">Total Passed
+                    </div>
+                </div>
+                <div class="stat-card" style="text-align: center;">
+                    <div class="stat-value" id="dept-pass-rate" style="font-size: 2.5rem; margin-bottom: 0.5rem;">0%
+                    </div>
+                    <div class="stat-label" style="text-transform: none; color: var(--text-secondary);">Pass Rate</div>
+                </div>
+                <div class="stat-card" style="text-align: center;">
+                    <div class="stat-value" id="dept-subjects" style="font-size: 2.5rem; margin-bottom: 0.5rem;">0</div>
+                    <div class="stat-label" style="text-transform: none; color: var(--text-secondary);">Subjects</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                <div class="stat-card" style="padding: 2rem;">
+                    <h3 style="margin-bottom: 2rem; font-weight: 600;">Grade Distribution</h3>
+                    <div style="height: 450px;">
+                        <canvas id="gradeDistChart"></canvas>
+                    </div>
+                </div>
+                <div class="stat-card" style="padding: 2rem;">
+                    <h3 style="margin-bottom: 2rem; font-weight: 600;">Performance Overview</h3>
+                    <div style="height: 450px;">
+                        <canvas id="deptPerformanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Global references for dynamic updates
+            window.allStats = {{ stats | tojson | safe }};
+            window.deptChartInstance = null;
+            window.passChartInstance = null;
+            window.gradeDistChartInstance = null;
+            window.perfChartInstance = null;
+
+            document.addEventListener('DOMContentLoaded', function () {
+                try {
+                    const deptStats = window.allStats.dept_summary;
+                    const labels = Object.keys(deptStats);
+                    const studentCounts = labels.map(l => deptStats[l].count);
+
+                    if (labels.length > 0) {
+                        window.deptChartInstance = new Chart(document.getElementById('deptChart'), {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Student Count',
+                                    data: studentCounts,
+                                    backgroundColor: '#6366f1',
+                                    borderRadius: 8
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                                    x: { grid: { display: false } }
+                                }
+                            }
+                        });
+                    }
+
+                    const totalPass = window.allStats.total_pass;
+                    const totalFail = window.allStats.total_fail;
+
+                    if (totalPass + totalFail > 0) {
+                        window.passChartInstance = new Chart(document.getElementById('passComparisonChart'), {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Passed', 'Failed/Absent'],
+                                datasets: [{
+                                    data: [totalPass, totalFail],
+                                    backgroundColor: ['#10b981', '#ef4444'],
+                                    borderWidth: 0,
+                                    hoverOffset: 10
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 20 } }
+                                },
+                                cutout: '70%'
+                            }
+                        });
+                    }
+
+                    // Initialize empty placeholder charts for Grade Dist and Performance
+                    const gradeCtx = document.getElementById('gradeDistChart').getContext('2d');
+                    window.gradeDistChartInstance = new Chart(gradeCtx, {
+                        type: 'doughnut',
+                        data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        color: '#94a3b8',
+                                        padding: 15,
+                                        boxWidth: 12,
+                                        font: { size: 11 },
+                                        generateLabels: function (chart) {
+                                            const data = chart.data;
+                                            if (data.labels.length && data.datasets.length) {
+                                                const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                                return data.labels.map((label, i) => {
+                                                    const value = data.datasets[0].data[i];
+                                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                                    const text = value > 0 ? `${label} - ${percentage}%` : label;
+                                                    return {
+                                                        text: text,
+                                                        fillStyle: data.datasets[0].backgroundColor[i],
+                                                        hidden: isNaN(data.datasets[0].data[i]) || chart.getDatasetMeta(0).data[i].hidden,
+                                                        index: i
+                                                    };
+                                                });
+                                            }
+                                            return [];
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const value = context.raw;
+                                            const percentage = ((value / total) * 100).toFixed(1);
+                                            return `${context.label}: ${value} (${percentage}%)`;
+                                        }
+                                    }
+                                }
+                            },
+                            cutout: '60%'
+                        }
+                    });
+
+                    const perfCtx = document.getElementById('deptPerformanceChart').getContext('2d');
+                    window.perfChartInstance = new Chart(perfCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Appeared', 'Passed', 'Failed'],
+                            datasets: [{
+                                label: 'Student Count',
+                                data: [0, 0, 0],
+                                backgroundColor: ['#6366f1', '#10b981', '#ef4444'],
+                                borderRadius: 8,
+                                barThickness: 60
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: { enabled: true }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: 'rgba(255,255,255,0.05)' },
+                                    ticks: { color: '#94a3b8' }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: '#94a3b8', font: { weight: '600' } }
+                                }
+                            }
+                        }
+                    });
+
+                } catch (e) {
+                    console.error("Chart initialization failed:", e);
+                }
+            });
+        </script>
+
+
+
+    </div>
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+
+        function updateThemeIcon(theme) {
+            themeIcon.className = theme === 'dark' ? 'ph ph-moon' : 'ph ph-sun';
+        }
+
+        updateThemeIcon(document.documentElement.getAttribute('data-theme'));
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+    </script>
+</body>
+
+</html>

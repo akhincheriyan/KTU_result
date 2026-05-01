@@ -1,0 +1,13 @@
+Flask
+pymupdf
+pandas
+openpyxl
+xlsxwriter
+werkzeug
+flask-login
+flask-sqlalchemy
+flask-mail
+python-dotenv
+flaskwebgui
+psutil
+gunicorn
